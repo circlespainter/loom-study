@@ -65,7 +65,7 @@ public class FiberTest {
 
                 final StackTraceElement[] st = fiberThreadRef.get().getStackTrace();
                 assertNotNull(st);
-                assertTrue(st.length > 0);
+                assertTrue(st.length > 0, "The fiber stack size is not > 0;");
 
                 boolean found = false;
                 for (final StackTraceElement ste : st) {
@@ -77,7 +77,7 @@ public class FiberTest {
                 assertTrue(found);
 
                 res.complete(null);
-            } catch (final Exception e) {
+            } catch (final AssertionError e) {
                 e.printStackTrace();
                 res.completeExceptionally(e);
             }
@@ -87,8 +87,8 @@ public class FiberTest {
         flag.set(true);
         try {
             assertNull(res.get());
-        } catch (Exception e) {
-            fail();
+        } catch (final Exception e) {
+            fail(e.getMessage());
         }
     }
 }
