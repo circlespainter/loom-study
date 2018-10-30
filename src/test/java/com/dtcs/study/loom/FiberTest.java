@@ -55,7 +55,7 @@ public class FiberTest {
 
         Thread.sleep(100);
 
-        final CompletableFuture<Void> res = new CompletableFuture<>();
+        var res = new CompletableFuture<Void>();
         var fiber2 = new java.lang.Fiber(scheduler, () -> {
             try {
                 assertNotNull(fiber);
@@ -63,12 +63,12 @@ public class FiberTest {
                 assertTrue(fiber.isAlive());
                 assertTrue(fiberThreadRef.get().isAlive());
 
-                final StackTraceElement[] st = fiberThreadRef.get().getStackTrace();
+                var st = fiberThreadRef.get().getStackTrace();
                 assertNotNull(st);
                 assertTrue(st.length > 0, "The fiber stack size is not > 0;");
 
-                boolean found = false;
-                for (final StackTraceElement ste : st) {
+                var found = false;
+                for (final var ste : st) {
                     if (ste.getMethodName().equals("foo")) {
                         found = true;
                         break;
