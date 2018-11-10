@@ -9,6 +9,8 @@ package com.dtcs.study.loom;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -90,5 +92,22 @@ public class FiberTest {
         } catch (final Exception e) {
             fail(e.getMessage());
         }
+    }
+
+    @Test(dataProvider = "executors")
+    public void testCancelSleepingFiber(Executor scheduler) throws Exception {
+        var fiber = new java.lang.Fiber(scheduler, () -> {
+            try {
+                Thread.sleep(100);
+                fail("InterruptedException not thrown");
+            } catch (final InterruptedException ignored) {}
+        });
+
+        fiber.schedule();
+        Thread.sleep(20);
+        assertTrue(fiber.isAlive());
+        fiber.cancel();
+        var completed = fiber.await(Duration.of(5, ChronoUnit.MILLIS));
+        assertTrue(completed);
     }
 }
